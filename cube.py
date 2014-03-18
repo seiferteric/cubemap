@@ -20,27 +20,6 @@ for i in range(0,6):
         c = it.multi_index[2]
     
         z = -axA + HSIZE
-
-        #if i == 0:
-        #    x = HSIZE
-        #    y = axB - HSIZE
-        #elif i == 1:
-        #    x = -axB + HSIZE
-        #    y = HSIZE
-        #elif i == 2:
-        #    x = -HSIZE
-        #    y = -axB + HSIZE
-        #elif i == 3:
-        #    x = axB - HSIZE
-        #    y = -HSIZE
-        #elif i == 4:
-        #    z = HSIZE
-        #    x = -axB + HSIZE
-        #    y = axA - HSIZE
-        #elif i == 5:
-        #    z = -HSIZE
-        #    x = -axB + HSIZE
-        #    y = -axA + HSIZE
         
         if i == 0:
             x = HSIZE
