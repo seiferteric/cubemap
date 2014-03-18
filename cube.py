@@ -2,11 +2,22 @@
 import numpy as np
 from scipy import ndimage, misc
 import sys, math, os
+import argparse
 
-SIZE = 512
+
+parser = argparse.ArgumentParser(description='Turn a panorama image into a cube map (6 images)')
+
+parser.add_argument("--size", default=512, type=int, help="Size of output image sides")
+parser.add_argument("--prefix", default="side_", help="Prefix of output images")
+parser.add_argument("--type", default="jpg", help="File Type to save as, jpg, png etc.")
+parser.add_argument("input", help="Input panorama file")
+
+args = parser.parse_args()
+
+SIZE = args.size
 HSIZE = SIZE / 2.0
 
-im = ndimage.imread(sys.argv[1])
+im = ndimage.imread(args.input)
 side_im = np.zeros((SIZE, SIZE, 3), np.uint8)
 
 for i in range(0,6):
@@ -52,8 +63,9 @@ for i in range(0,6):
     
     
         it.iternext()
-    misc.imsave("out%d.jpg"%i, side_im)
+    misc.imsave("%s%d.%s"%(args.prefix,i,args.type), side_im)
     
+    #Children Exit here
     sys.exit(0)
 
 
