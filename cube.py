@@ -10,6 +10,7 @@ parser = argparse.ArgumentParser(description='Turn a panorama image into a cube 
 parser.add_argument("--size", default=512, type=int, help="Size of output image sides")
 parser.add_argument("--prefix", default="side_", help="Prefix of output images")
 parser.add_argument("--type", default="jpg", help="File Type to save as, jpg, png etc.")
+parser.add_argument("--dir", default="./", help="Directory in which to put the output files")
 parser.add_argument("input", help="Input panorama file")
 
 args = parser.parse_args()
@@ -63,7 +64,7 @@ for i in range(0,6):
     
     
         it.iternext()
-    misc.imsave("%s%d.%s"%(args.prefix,i,args.type), side_im)
+    misc.imsave(os.path.join(args.dir, "%s%d.%s"%(args.prefix,i,args.type)), side_im)
     
     #Children Exit here
     sys.exit(0)
