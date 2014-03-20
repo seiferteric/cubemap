@@ -11,6 +11,7 @@ parser.add_argument("--size", default=512, type=int, help="Size of output image 
 parser.add_argument("--prefix", default="side_", help="Prefix of output images")
 parser.add_argument("--type", default="jpg", help="File Type to save as, jpg, png etc.")
 parser.add_argument("--dir", default="./", help="Directory in which to put the output files")
+parser.add_argument("--onefile", help="Save output as one concatenated file, still uses intermediate files as temp storage.")
 parser.add_argument("input", help="Input panorama file")
 
 args = parser.parse_args()
@@ -20,10 +21,11 @@ HSIZE = SIZE / 2.0
 
 im = ndimage.imread(args.input)
 side_im = np.zeros((SIZE, SIZE, 3), np.uint8)
-
+pids = []
 for i in range(0,6):
     pid = os.fork()
     if pid != 0:
+        pids.append(pid)
         continue 
     it = np.nditer(side_im, flags=['multi_index'], op_flags=['readwrite'])
     while not it.finished:
@@ -70,5 +72,16 @@ for i in range(0,6):
     sys.exit(0)
 
 
-    
-os.waitpid(-1, 0)
+# Thise seems to work better than waitpid(-1, 0), in that case sometimes the
+# files still don't exist and we get an error.
+for pid in pids: 
+    os.waitpid(pid, 0)
+
+if args.onefile:
+    ifiles = []
+    for i in range(0,6):
+        ifiles.append(misc.imread(os.path.join(args.dir, "%s%d.%s"%(args.prefix,i,args.type))))
+    onefile = np.concatenate(ifiles, axis=1)
+    misc.imsave(args.onefile, onefile)    
+    for i in range(0,6):
+        os.unlink(os.path.join(args.dir, "%s%d.%s"%(args.prefix,i,args.type)))
