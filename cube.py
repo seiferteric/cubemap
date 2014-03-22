@@ -21,8 +21,11 @@ SIZE = args.size
 HSIZE = SIZE / 2.0
 
 im = ndimage.imread(args.input)
-#Create blank image of output size
-side_im = np.zeros((SIZE, SIZE, 3), np.uint8)
+#Create blank image of output size, I am using one 2D
+#and one 3D so I only have to iterate over 2 axis, need
+# to figure out how to do it properly with nditer...
+side_im = np.zeros((SIZE, SIZE), np.uint8)
+color_side = np.zeros((SIZE, SIZE, 3), np.uint8)
 pids = []
 for i in range(0,6):
     #Multiple process to go faster!
@@ -38,7 +41,6 @@ for i in range(0,6):
         axA = it.multi_index[0]
         axB = it.multi_index[1]
         #Color is an axis, so we visit each point 3 times for R,G,B actually...
-        color = it.multi_index[2]
    
         #Here for each face we decide what each axis represents, x, y or z. 
         z = -axA + HSIZE
@@ -72,11 +74,17 @@ for i in range(0,6):
         #Now that we have spherical, decide which pixel from the input image we want.
         ix = (im.shape[1]-1)*phi/(2*math.pi)
         iy = (im.shape[0]-1)*(theta)/math.pi
-        it[0] = im[iy, ix, color]
-    
+        #This is faster than accessing the whole tuple! WHY???
+        r = im[iy, ix, 0]
+        g = im[iy, ix, 1]
+        b = im[iy, ix, 2]
+        color_side[axA, axB, 0] = r
+        color_side[axA, axB, 1] = g
+        color_side[axA, axB, 2] = b
+
         it.iternext()
     #Save output image using prefix, type and index info.
-    misc.imsave(os.path.join(args.dir, "%s%d.%s"%(args.prefix,i,args.type)), side_im)
+    misc.imsave(os.path.join(args.dir, "%s%d.%s"%(args.prefix,i,args.type)), color_side)
     
     #Children Exit here
     sys.exit(0)
