@@ -16,23 +16,31 @@ parser.add_argument("input", help="Input panorama file")
 
 args = parser.parse_args()
 
+#This is the output image size (side length, its a square)
 SIZE = args.size
 HSIZE = SIZE / 2.0
 
 im = ndimage.imread(args.input)
+#Create blank image of output size
 side_im = np.zeros((SIZE, SIZE, 3), np.uint8)
 pids = []
 for i in range(0,6):
+    #Multiple process to go faster!
     pid = os.fork()
     if pid != 0:
+        # Keep track of our children
         pids.append(pid)
-        continue 
+        continue
+    # This is numpy's way of visiting each point in an ndarray, I guess its fast...
     it = np.nditer(side_im, flags=['multi_index'], op_flags=['readwrite'])
     while not it.finished:
+        #Axis
         axA = it.multi_index[0]
         axB = it.multi_index[1]
-        c = it.multi_index[2]
-    
+        #Color is an axis, so we visit each point 3 times for R,G,B actually...
+        color = it.multi_index[2]
+   
+        #Here for each face we decide what each axis represents, x, y or z. 
         z = -axA + HSIZE
         
         if i == 0:
@@ -56,16 +64,18 @@ for i in range(0,6):
             x = axB - HSIZE
             y = -axA + HSIZE
     
+        #Now that we have x,y,z for point on plane, convert to spherical
         r = math.sqrt(float(x*x + y*y + z*z))
         theta = math.acos(float(z)/r)
         phi = math.atan2(float(y),x)
-
+        
+        #Now that we have spherical, decide which pixel from the input image we want.
         ix = (im.shape[1]-1)*phi/(2*math.pi)
         iy = (im.shape[0]-1)*(theta)/math.pi
-        it[0] = im[iy, ix, c]
-    
+        it[0] = im[iy, ix, color]
     
         it.iternext()
+    #Save output image using prefix, type and index info.
     misc.imsave(os.path.join(args.dir, "%s%d.%s"%(args.prefix,i,args.type)), side_im)
     
     #Children Exit here
@@ -77,6 +87,7 @@ for i in range(0,6):
 for pid in pids: 
     os.waitpid(pid, 0)
 
+#This is handy if we want just one image our program will parse instead of 6.
 if args.onefile:
     ifiles = []
     for i in range(0,6):
