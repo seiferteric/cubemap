@@ -69,7 +69,7 @@ for i in range(0,6):
         #Now that we have x,y,z for point on plane, convert to spherical
         r = math.sqrt(float(x*x + y*y + z*z))
         theta = math.acos(float(z)/r)
-        phi = math.atan2(float(y),x)
+        phi = -math.atan2(float(y),x)
         
         #Now that we have spherical, decide which pixel from the input image we want.
         ix = (im.shape[1]-1)*phi/(2*math.pi)
