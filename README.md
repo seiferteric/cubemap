@@ -19,6 +19,6 @@ brew install python
 ````
 1. Install Python Imaging Libraries (PIL) & numpy
 ````
-pip install pillow numpy
+pip install pillow numpy scipy
 ````
 
