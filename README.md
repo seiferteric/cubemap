@@ -8,6 +8,12 @@ Basically, translates each point from each face which is a plane in cartesian
 coordinates into spherical coordinates and then gets the pixel value from the
 image.
 
+## Prerequisite
+
+1. PIL (or pillow)
+1. numpy
+1. scipy
+
 # Installation
 
 ## Mac OS X Mavericks
