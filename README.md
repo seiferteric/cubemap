@@ -2,7 +2,7 @@
 
 This "renders" the 6 faces of a cube from a panorama input image. 
 
-Usefull if you want to tile your panorama onto a 3D cube for viewing.
+Useful if you want to tile your panorama onto a 3D cube for viewing.
 
 Basically, translates each point from each face which is a plane in cartesian
 coordinates into spherical coordinates and then gets the pixel value from the
@@ -19,7 +19,7 @@ cube.py [-h] [--size SIZE] [--prefix PREFIX] [--type TYPE] [--dir DIR]
 
 **prefix** : prefix for file names
 
-**type** : -
+**type** : Image format (jpg, png ...)
 
 **dir** : where to store result files
 
