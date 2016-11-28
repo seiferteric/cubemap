@@ -89,10 +89,8 @@ for i in range(0,6):
     if args.quality and args.type == "jpg":
         pimg = Image.fromarray(color_side)
         pimg.save(os.path.join(args.dir, "%s%d.%s"%(args.prefix,i,args.type)), quality=args.quality)
-        print "YES"
     else:
         misc.imsave(os.path.join(args.dir, "%s%d.%s"%(args.prefix,i,args.type)), color_side)
-        print "NO"
     
     #Children Exit here
     sys.exit(0)
