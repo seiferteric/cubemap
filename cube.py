@@ -3,6 +3,7 @@ import numpy as np
 from scipy import ndimage, misc
 import sys, math, os
 import argparse
+from PIL import Image
 
 
 parser = argparse.ArgumentParser(description='Turn a panorama image into a cube map (6 images)')
@@ -12,6 +13,7 @@ parser.add_argument("--prefix", default="side_", help="Prefix of output images")
 parser.add_argument("--type", default="jpg", help="File Type to save as, jpg, png etc.")
 parser.add_argument("--dir", default="./", help="Directory in which to put the output files")
 parser.add_argument("--onefile", help="Save output as one concatenated file, still uses intermediate files as temp storage.")
+parser.add_argument("--quality", type=int, help="Quality of jpeg output. (Only valid for jpeg format)")
 parser.add_argument("input", help="Input panorama file")
 
 args = parser.parse_args()
@@ -72,8 +74,8 @@ for i in range(0,6):
         phi = -math.atan2(float(y),x)
         
         #Now that we have spherical, decide which pixel from the input image we want.
-        ix = (im.shape[1]-1)*phi/(2*math.pi)
-        iy = (im.shape[0]-1)*(theta)/math.pi
+        ix = int((im.shape[1]-1)*phi/(2*math.pi))
+        iy = int((im.shape[0]-1)*(theta)/math.pi)
         #This is faster than accessing the whole tuple! WHY???
         r = im[iy, ix, 0]
         g = im[iy, ix, 1]
@@ -84,7 +86,13 @@ for i in range(0,6):
 
         it.iternext()
     #Save output image using prefix, type and index info.
-    misc.imsave(os.path.join(args.dir, "%s%d.%s"%(args.prefix,i,args.type)), color_side)
+    if args.quality and args.type == "jpg":
+        pimg = Image.fromarray(color_side)
+        pimg.save(os.path.join(args.dir, "%s%d.%s"%(args.prefix,i,args.type)), quality=args.quality)
+        print "YES"
+    else:
+        misc.imsave(os.path.join(args.dir, "%s%d.%s"%(args.prefix,i,args.type)), color_side)
+        print "NO"
     
     #Children Exit here
     sys.exit(0)
