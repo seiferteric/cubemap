@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import numpy as np
-from scipy import ndimage, misc
+import imageio
 import sys, math, os
 import argparse
 from PIL import Image
@@ -22,7 +22,7 @@ args = parser.parse_args()
 SIZE = args.size
 HSIZE = SIZE / 2.0
 
-im = ndimage.imread(args.input)
+im = imageio.imread(args.input)
 #Create blank image of output size, I am using one 2D
 #and one 3D so I only have to iterate over 2 axis, need
 # to figure out how to do it properly with nditer...
@@ -90,7 +90,7 @@ for i in range(0,6):
         pimg = Image.fromarray(color_side)
         pimg.save(os.path.join(args.dir, "%s%d.%s"%(args.prefix,i,args.type)), quality=args.quality)
     else:
-        misc.imsave(os.path.join(args.dir, "%s%d.%s"%(args.prefix,i,args.type)), color_side)
+        imageio.imsave(os.path.join(args.dir, "%s%d.%s"%(args.prefix,i,args.type)), color_side)
     
     #Children Exit here
     sys.exit(0)
@@ -105,8 +105,8 @@ for pid in pids:
 if args.onefile:
     ifiles = []
     for i in range(0,6):
-        ifiles.append(misc.imread(os.path.join(args.dir, "%s%d.%s"%(args.prefix,i,args.type))))
+        ifiles.append(imageio.imread(os.path.join(args.dir, "%s%d.%s"%(args.prefix,i,args.type))))
     onefile = np.concatenate(ifiles, axis=1)
-    misc.imsave(args.onefile, onefile)    
+    imageio.imsave(args.onefile, onefile)    
     for i in range(0,6):
         os.unlink(os.path.join(args.dir, "%s%d.%s"%(args.prefix,i,args.type)))
