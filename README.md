@@ -31,7 +31,7 @@ cube.py [-h] [--size SIZE] [--prefix PREFIX] [--type TYPE] [--dir DIR]
 
 1. PIL (or pillow)
 1. numpy
-1. scipy
+1. imageio
 
 ## Installation
 
